@@ -108,10 +108,6 @@ fun main() {
             "ArrowDown" -> {
                 event.preventDefault()
                 blocksGame.setDownHeld(true)
-                // Un petit "soft drop" immédiat pour réactivité.
-                if (canFire("tetris-down-step", 60.0)) {
-                    // On simule un tick en demandant une descente plus fréquente (le held le fera de toute façon).
-                }
             }
         }
     })
