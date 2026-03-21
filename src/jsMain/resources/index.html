@@ -3,37 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TetraSnake - Socle</title>
+    <title>TetraSnake - Démo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
     <div class="top-hud">
-        <div class="brand">
-            TetraSnake<br>
-            Snake vs Blocks
+        <div class="titre">
+            TetraSnake
         </div>
 
         <div class="scores">
-            <div class="score-row score-snake"><span class="score-key">SNAKE</span><span id="score-snake" class="score-val">0</span></div>
-            <div class="score-row score-tetris"><span class="score-key">BLOCKS</span><span id="score-tetris" class="score-val">0</span></div>
+            <div class="score-row score-serpent"><span class="score-key">SERPENT</span><span id="score-serpent" class="score-val">0</span></div>
+            <div class="score-row score-blocs"><span class="score-key">BLOCS</span><span id="score-blocs" class="score-val">0</span></div>
             <div class="score-row score-total"><span class="score-key">TOTAL</span><span id="score-total" class="score-val">0</span></div>
         </div>
     </div>
 
     <div class="game-wrapper">
         <main class="game-layout">
-            <canvas id="canvas-snake" width="720" height="800"></canvas>
-            <canvas id="canvas-blocks" width="520" height="756"></canvas>
+            <canvas id="canvas-serpent" width="710" height="756"></canvas>
+            <canvas id="canvas-blocs" width="520" height="756"></canvas>
         </main>
 
         <div id="game-overlay" class="hidden">
             <div class="overlay-card">
-                <div id="game-over-text" class="overlay-title">GAME OVER</div>
-                <button id="restart-btn" class="restart-btn">Restart (R)</button>
+                <div id="perdu-text" class="overlay-title">PERDU</div>
+                <button id="recommencer-btn" class="recommencer-btn">Recommencer (R)</button>
             </div>
         </div>
     </div>

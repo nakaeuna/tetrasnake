@@ -21,7 +21,6 @@ kotlin {
 
     sourceSets {
         val jsMain by getting {
-            // On garde la structure de projet existante (`src/main/kotlin`).
             kotlin.srcDir("src/main/kotlin")
         }
     }

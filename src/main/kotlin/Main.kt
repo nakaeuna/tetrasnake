@@ -8,18 +8,18 @@ import org.w3c.dom.HTMLSpanElement
 import org.w3c.dom.HTMLCanvasElement
 
 fun main() {
-    val canvasSerpent = ajoutCanvas("canvas-snake")
-    val canvasBlocs = ajoutCanvas("canvas-blocks")
+    val canvasSerpent = ajoutCanvas("canvas-serpent")
+    val canvasBlocs = ajoutCanvas("canvas-blocs")
 
     val contexteSerpent = canvasSerpent.getContext("2d") as CanvasRenderingContext2D
     val contexteBlocs = canvasBlocs.getContext("2d") as CanvasRenderingContext2D
 
-    val elementScoreSerpent = ajoutSpan("score-snake")
-    val elementScoreBlocs = ajoutSpan("score-tetris")
+    val elementScoreSerpent = ajoutSpan("score-serpent")
+    val elementScoreBlocs = ajoutSpan("score-blocs")
     val elementScoreTotal = ajoutSpan("score-total")
     val elementOverlay = ajoutDiv("game-overlay")
-    val elementTexteGameOver = ajoutDiv("game-over-text")
-    val boutonRelancer = ajoutButton("restart-btn")
+    val elementTexteGameOver = ajoutDiv("perdu-text")
+    val boutonRelancer = ajoutButton("recommencer-btn")
 
     val vitesse = FacteursVitesse(multiplicateurSerpent = 1.0, multiplicateurBlocs = 1.0)
 
@@ -72,11 +72,6 @@ fun main() {
     controleur.demarrer()
 }
 
-/**
- * Cellules carrées : taille = largeurCanvas / colonnes (entier).
- * On ajuste la hauteur du canvas pour que (hauteur - HUD) soit un multiple exact de cette taille,
- * sinon une bande vide en bas faisait croire que la « première » ligne (vue du bas) ne se remplissait pas.
- */
 private fun dimensionsGrilleBlocs(
     largeurCanvas: Int,
     hauteurCanvas: Int,

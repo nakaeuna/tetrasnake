@@ -1,5 +1,10 @@
 :root {
     color-scheme: dark;
+    --hauteur-canvas-jeu: min(756px, 82vh);
+    --surface: rgba(8, 12, 28, 0.72);
+    --stroke: rgba(255, 255, 255, 0.12);
+    --glow-cyan: rgba(34, 211, 238, 0.35);
+    --glow-amber: rgba(251, 191, 36, 0.22);
 }
 
 * {
@@ -13,48 +18,58 @@ body {
     align-items: center;
     justify-content: center;
     background:
-        radial-gradient(circle at 15% 20%, rgba(34, 211, 238, 0.22), transparent 35%),
-        radial-gradient(circle at 85% 30%, rgba(249, 115, 22, 0.20), transparent 40%),
-        radial-gradient(circle at 50% 80%, rgba(99, 102, 241, 0.18), transparent 45%),
-        #04040b;
-    color: #e5e7eb;
-    font-family: Inter, Arial, sans-serif;
+        radial-gradient(ellipse 100% 80% at 50% 0%, rgba(30, 58, 138, 0.35), transparent 50%),
+        radial-gradient(circle at 15% 25%, rgba(34, 211, 238, 0.18), transparent 38%),
+        radial-gradient(circle at 88% 20%, rgba(251, 146, 60, 0.14), transparent 42%),
+        radial-gradient(circle at 50% 100%, rgba(99, 102, 241, 0.2), transparent 48%),
+        linear-gradient(165deg, #030712 0%, #0a0f1e 45%, #04040b 100%);
+    color: #f1f5f9;
+    font-family: ui-sans-serif, system-ui, "Segoe UI", Inter, Arial, sans-serif;
 }
 
 .app {
     width: 100%;
     max-width: min(1320px, 96vw);
-    padding: 18px 14px 26px;
+    padding: 20px 16px 28px;
 }
 
 .top-hud {
     display: flex;
-    gap: 12px;
-    align-items: flex-start;
+    gap: 16px;
+    align-items: center;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
 }
 
-.brand {
+.titre {
     font-family: "Press Start 2P", monospace;
-    letter-spacing: 0.5px;
-    font-size: 14px;
-    line-height: 1.4;
+    letter-spacing: 0.12em;
+    font-size: clamp(11px, 2.1vw, 14px);
+    line-height: 1.55;
     color: #fff;
     text-shadow:
-        0 0 10px rgba(34, 211, 238, 0.35),
-        0 0 18px rgba(249, 115, 22, 0.22);
+        0 0 14px var(--glow-cyan),
+        0 0 28px var(--glow-amber);
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: min(100%, 12rem);
 }
 
 .scores {
     display: grid;
     grid-auto-flow: row;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 14px;
-    border: 3px solid rgba(255,255,255,0.10);
-    background: rgba(2, 6, 23, 0.60);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.30);
+    gap: 11px;
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 1px solid var(--stroke);
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+        0 0 0 1px rgba(34, 211, 238, 0.08) inset,
+        0 12px 40px rgba(0, 0, 0, 0.35);
+    flex-shrink: 0;
 }
 
 .score-row {
@@ -92,14 +107,18 @@ body {
     flex-wrap: nowrap;
     align-items: flex-start;
     justify-content: center;
-    gap: 20px;
-    padding: 16px;
-    border-radius: 16px;
-    background: rgba(2, 6, 23, 0.45);
-    border: 3px solid rgba(255,255,255,0.10);
+    gap: 22px;
+    padding: 18px;
+    border-radius: 18px;
+    background: linear-gradient(
+        155deg,
+        rgba(15, 23, 42, 0.55) 0%,
+        rgba(2, 6, 23, 0.65) 100%
+    );
+    border: 1px solid var(--stroke);
     box-shadow:
-        0 0 0 2px rgba(34, 211, 238, 0.14) inset,
-        0 10px 30px rgba(0, 0, 0, 0.35);
+        0 0 0 1px rgba(34, 211, 238, 0.1) inset,
+        0 16px 48px rgba(0, 0, 0, 0.4);
     width: max-content;
     min-width: 100%;
     margin-left: auto;
@@ -107,23 +126,26 @@ body {
 }
 
 .game-layout canvas {
-    border: 3px solid rgba(75, 85, 99, 0.95);
-    border-radius: 8px;
-    background: #0b1220;
+    border-radius: 10px;
+    background: #070b14;
     image-rendering: pixelated;
     flex-shrink: 0;
-    height: auto;
+    height: var(--hauteur-canvas-jeu);
+    width: auto;
+    max-width: min(96vw, 100%);
+    border: 2px solid rgba(71, 85, 105, 0.85);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        0 8px 32px rgba(0, 0, 0, 0.45),
+        0 0 28px rgba(34, 211, 238, 0.08);
 }
 
-/* Serpent : zone plus large. Blocs : à droite, même ligne obligatoire. */
-#canvas-snake {
-    width: min(720px, 58vw);
-    aspect-ratio: 720 / 800;
+/* Même hauteur à l’écran : largeur dérivée du ratio intrinsèque du canvas */
+#canvas-serpent {
+    aspect-ratio: 710 / 756;
 }
 
-#canvas-blocks {
-    width: min(520px, 40vw);
-    /* Hauteur = HUD (80) + lignes × cellule (52×13) : pas de bande vide sous la grille */
+#canvas-blocs {
     aspect-ratio: 520 / 756;
 }
 
@@ -134,8 +156,9 @@ body {
     align-items: center;
     justify-content: center;
     padding: 18px;
-    background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(4px);
+    background: rgba(3, 7, 18, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 #game-overlay.hidden {
@@ -144,13 +167,18 @@ body {
 
 .overlay-card {
     width: min(560px, 100%);
-    border-radius: 18px;
-    border: 4px solid rgba(249, 115, 22, 0.95);
-    background: rgba(2, 6, 23, 0.85);
+    border-radius: 20px;
+    border: 1px solid rgba(251, 146, 60, 0.45);
+    background: linear-gradient(
+        160deg,
+        rgba(15, 23, 42, 0.92) 0%,
+        rgba(2, 6, 23, 0.94) 100%
+    );
     box-shadow:
-        0 0 0 3px rgba(249, 115, 22, 0.16) inset,
-        0 18px 60px rgba(0, 0, 0, 0.55);
-    padding: 18px 18px 16px;
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        0 0 40px rgba(249, 115, 22, 0.15),
+        0 20px 56px rgba(0, 0, 0, 0.55);
+    padding: 22px 20px 18px;
     text-align: center;
 }
 
@@ -164,20 +192,20 @@ body {
     margin-bottom: 16px;
 }
 
-.restart-btn {
+.recommencer-btn {
     font-family: "Press Start 2P", monospace;
     font-size: 12px;
     padding: 12px 18px;
     border-radius: 12px;
     border: 4px solid rgba(34, 211, 238, 0.85);
     background: rgba(34, 211, 238, 0.15);
-    color: #e5e7eb;
+    color: #000000;
     cursor: pointer;
     box-shadow:
         0 0 0 3px rgba(34, 211, 238, 0.10) inset,
         0 10px 25px rgba(0,0,0,0.35);
 }
 
-.restart-btn:hover {
+.recommencer-btn:hover {
     background: rgba(34, 211, 238, 0.25);
 }
