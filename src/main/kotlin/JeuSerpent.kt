@@ -18,7 +18,8 @@ class JeuSerpent(
     private val colonnes: Int,
     private val lignes: Int,
     private val taillePixel: Double,
-    private val quandSerpentMangePoint: () -> Unit,
+    /** Indice du type de pièce (0..6), aligné sur [couleursPiecesHex]. */
+    private val quandSerpentMangePoint: (Int) -> Unit,
 ) {
     private val alea = Random.Default
 
@@ -26,6 +27,7 @@ class JeuSerpent(
     private var directionCourante: Direction = Direction.Droite
     private var directionProchaine: Direction = directionCourante
     private var nourriture: Pixels = Pixels(0, 0)
+    private var indiceTypeNourriture: Int = 0
 
     private var accumulateurDeplacementSeconde = 0.0
     private val intervalleDeplacementSeconde = 0.10
@@ -53,31 +55,38 @@ class JeuSerpent(
         score = 0
         accumulateurDeplacementSeconde = 0.0
 
-        nourriture = randomCelluleVide()
+        placerNouvelleNourriture()
     }
 
     fun gererDeplacementHautSerpent() {
-        if (perdu) return
-        val newDir = Direction.Haut
-        if (!directionsSontOpposees(directionCourante, newDir)) directionProchaine = newDir
+        tenterChangerDirection(Direction.Haut)
     }
 
     fun gererDeplacementGaucheSerpent() {
-        if (perdu) return
-        val newDir = Direction.Gauche
-        if (!directionsSontOpposees(directionCourante, newDir)) directionProchaine = newDir
+        tenterChangerDirection(Direction.Gauche)
     }
 
     fun gererDeplacementBasSerpent() {
-        if (perdu) return
-        val newDir = Direction.Bas
-        if (!directionsSontOpposees(directionCourante, newDir)) directionProchaine = newDir
+        tenterChangerDirection(Direction.Bas)
     }
 
     fun gererDeplacementDroiteSerpent() {
+        tenterChangerDirection(Direction.Droite)
+    }
+
+    private fun tenterChangerDirection(nouvelle: Direction) {
         if (perdu) return
-        val newDir = Direction.Droite
-        if (!directionsSontOpposees(directionCourante, newDir)) directionProchaine = newDir
+        if (!peutChoisirDirection(nouvelle)) return
+        directionProchaine = nouvelle
+    }
+
+    /** Refuse 180° et tout déplacement qui ferait entrer la tête dans le corps. */
+    private fun peutChoisirDirection(nouvelle: Direction): Boolean {
+        if (directionsSontOpposees(directionCourante, nouvelle)) return false
+        val tete = serpent.last()
+        val cible = Pixels(tete.x + nouvelle.dx, tete.y + nouvelle.dy)
+        val mangera = cible == nourriture
+        return !mordDansCorps(cible, mangera)
     }
 
     fun mettreAJour(deltaSec: Double) {
@@ -97,7 +106,7 @@ class JeuSerpent(
                 return
             }
 
-            if (collisionAvecCorps(prochaineCase, vaManger)) {
+            if (mordDansCorps(prochaineCase, vaManger)) {
                 perdu = true
                 return
             }
@@ -125,11 +134,19 @@ class JeuSerpent(
         return cible.x in 0 until colonnes && cible.y in 0 until lignes
     }
 
-    private fun collisionAvecCorps(cible: Pixels, vaManger: Boolean): Boolean {
-        // Collisions avec le corps (si on ne mange pas, la queue bouge).
+    /**
+     * Vrai si la tête irait sur une case du corps (interdit).
+     * La queue actuelle est libérée au prochain pas si on ne mange pas.
+     */
+    private fun mordDansCorps(cible: Pixels, vaManger: Boolean): Boolean {
+        if (vaManger) return false
+        if (serpent.isEmpty()) return false
         val queue = serpent.first()
-        if (!vaManger && cible == queue) return false
-        return serpent.any { it == cible }
+        if (cible == queue) return false
+        for (segment in serpent.dropLast(1)) {
+            if (segment == cible) return true
+        }
+        return false
     }
 
     private fun avancerSerpent(cible: Pixels, vaManger: Boolean) {
@@ -141,8 +158,8 @@ class JeuSerpent(
         }
 
         score++
-        quandSerpentMangePoint()
-        nourriture = randomCelluleVide()
+        quandSerpentMangePoint(indiceTypeNourriture)
+        placerNouvelleNourriture()
 
         if (serpent.size >= colonnes * lignes) {
             // Grille entièrement remplie : victoire implicite.
@@ -150,7 +167,12 @@ class JeuSerpent(
         }
     }
 
-    private fun randomCelluleVide(): Pixels {
+    private fun placerNouvelleNourriture() {
+        indiceTypeNourriture = alea.nextInt(couleursPiecesHex.size)
+        nourriture = randomCelluleVideSansSerpent()
+    }
+
+    private fun randomCelluleVideSansSerpent(): Pixels {
         if (serpent.size >= colonnes * lignes) return Pixels(0, 0)
         while (true) {
             val c = Pixels(alea.nextInt(colonnes), alea.nextInt(lignes))
@@ -187,7 +209,7 @@ class JeuSerpent(
 
     private fun dessinerNourriture(ctx: CanvasRenderingContext2D) {
         val marge = taillePixel * 0.2
-        ctx.fillStyle = "#FDE047"
+        ctx.fillStyle = couleursPiecesHex[indiceTypeNourriture.coerceIn(0, couleursPiecesHex.size - 1)]
         ctx.fillRect(
             nourriture.x * taillePixel + marge,
             nourriture.y * taillePixel + marge,

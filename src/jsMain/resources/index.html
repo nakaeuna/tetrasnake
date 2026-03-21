@@ -7,167 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            color-scheme: dark;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background:
-                radial-gradient(circle at 15% 20%, rgba(34, 211, 238, 0.22), transparent 35%),
-                radial-gradient(circle at 85% 30%, rgba(249, 115, 22, 0.20), transparent 40%),
-                radial-gradient(circle at 50% 80%, rgba(99, 102, 241, 0.18), transparent 45%),
-                #04040b;
-            color: #e5e7eb;
-            font-family: Inter, Arial, sans-serif;
-        }
-
-        .app {
-            width: 100%;
-            max-width: 980px;
-            padding: 18px 14px 26px;
-        }
-
-        .top-hud {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-
-        .brand {
-            font-family: "Press Start 2P", monospace;
-            letter-spacing: 0.5px;
-            font-size: 14px;
-            line-height: 1.4;
-            color: #fff;
-            text-shadow:
-                0 0 10px rgba(34, 211, 238, 0.35),
-                0 0 18px rgba(249, 115, 22, 0.22);
-        }
-
-        .scores {
-            display: grid;
-            grid-auto-flow: row;
-            gap: 10px;
-            padding: 12px;
-            border-radius: 14px;
-            border: 3px solid rgba(255,255,255,0.10);
-            background: rgba(2, 6, 23, 0.60);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.30);
-        }
-
-        .score-row {
-            font-family: "Press Start 2P", monospace;
-            font-size: 11px;
-            white-space: nowrap;
-        }
-
-        .score-key {
-            opacity: 0.85;
-            margin-right: 8px;
-        }
-
-        .score-val {
-            color: #fff;
-            text-shadow: 0 0 10px rgba(34, 211, 238, 0.35);
-        }
-
-        .score-total .score-val {
-            color: #22c55e;
-            text-shadow: 0 0 12px rgba(34, 197, 94, 0.35);
-        }
-
-        .game-wrapper {
-            position: relative;
-        }
-
-        .game-layout {
-            display: flex;
-            gap: 16px;
-            padding: 16px;
-            border-radius: 16px;
-            background: rgba(2, 6, 23, 0.45);
-            border: 3px solid rgba(255,255,255,0.10);
-            box-shadow:
-                0 0 0 2px rgba(34, 211, 238, 0.14) inset,
-                0 10px 30px rgba(0, 0, 0, 0.35);
-        }
-
-        canvas {
-            width: 400px;
-            height: 600px;
-            border: 3px solid rgba(75, 85, 99, 0.95);
-            border-radius: 8px;
-            background: #0b1220;
-            image-rendering: pixelated;
-        }
-
-        #game-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 18px;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(4px);
-        }
-
-        #game-overlay.hidden {
-            display: none;
-        }
-
-        .overlay-card {
-            width: min(560px, 100%);
-            border-radius: 18px;
-            border: 4px solid rgba(249, 115, 22, 0.95);
-            background: rgba(2, 6, 23, 0.85);
-            box-shadow:
-                0 0 0 3px rgba(249, 115, 22, 0.16) inset,
-                0 18px 60px rgba(0, 0, 0, 0.55);
-            padding: 18px 18px 16px;
-            text-align: center;
-        }
-
-        .overlay-title {
-            font-family: "Press Start 2P", monospace;
-            font-size: 18px;
-            color: #fff;
-            text-shadow:
-                0 0 12px rgba(249, 115, 22, 0.50),
-                0 0 22px rgba(239, 68, 68, 0.20);
-            margin-bottom: 16px;
-        }
-
-        .restart-btn {
-            font-family: "Press Start 2P", monospace;
-            font-size: 12px;
-            padding: 12px 18px;
-            border-radius: 12px;
-            border: 4px solid rgba(34, 211, 238, 0.85);
-            background: rgba(34, 211, 238, 0.15);
-            color: #e5e7eb;
-            cursor: pointer;
-            box-shadow:
-                0 0 0 3px rgba(34, 211, 238, 0.10) inset,
-                0 10px 25px rgba(0,0,0,0.35);
-        }
-
-        .restart-btn:hover {
-            background: rgba(34, 211, 238, 0.25);
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
@@ -186,8 +26,8 @@
 
     <div class="game-wrapper">
         <main class="game-layout">
-            <canvas id="canvas-snake" width="400" height="600"></canvas>
-            <canvas id="canvas-blocks" width="400" height="600"></canvas>
+            <canvas id="canvas-snake" width="720" height="800"></canvas>
+            <canvas id="canvas-blocks" width="520" height="756"></canvas>
         </main>
 
         <div id="game-overlay" class="hidden">
@@ -202,4 +42,3 @@
 <script src="app.js"></script>
 </body>
 </html>
-

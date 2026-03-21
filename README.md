@@ -5,9 +5,9 @@ Jeu web asymétrique en **Kotlin 100%**, rendu en **HTML5 `<canvas>`** avec une 
 ## Règles rapides
 
 ### À gauche : Snake (clavier `Z Q S D`)
-- Déplacement sur grille
-- Collision murs / collision avec soi = Game Over
-- Quand le snake mange un point, il déclenche une pièce pour le jeu de droite
+- Déplacement sur grille (zone plus large : plus de cases)
+- Collision murs / morsure du corps = Game Over (virage interdit s’il ferait entrer la tête dans le corps)
+- Chaque point a une **couleur** : elle correspond au **type de pièce** envoyée au jeu de droite (I, O, T, J, L, S, Z)
 
 ### À droite : Blocs qui tombent
 - Pièces rotatives avec gravité
@@ -42,7 +42,10 @@ Jeu web asymétrique en **Kotlin 100%**, rendu en **HTML5 `<canvas>`** avec une 
 Ouvre ensuite l’URL affichée `http://localhost:8080/`. Elle s'ouvre automatiquement dans le navigateur la plupart du temps.
 
 ## Architecture
-`src/main/kotlin/Main.kt` : orchestration, boucle de rendu, clavier, overlay game over, scores
-`src/main/kotlin/SnakeGame.kt` : logique snake (grille, collision, nourriture)
-`src/main/kotlin/BlocksGame.kt` : logique blocs (pièces, gravité, rotation, lignes, encart NEXT)
-`src/jsMain/resources/index.html` : UI (scores, overlay, style arcade)
+`src/main/kotlin/Main.kt` : bootstrap DOM + création des jeux
+`src/main/kotlin/ControleurTetrasnake.kt` : boucle `requestAnimationFrame`, clavier, scores, overlay
+`src/main/kotlin/JeuSerpent.kt` : serpent (grille, collision, nourriture colorée)
+`src/main/kotlin/JeuBlocs.kt` : blocs (pièces, gravité, rotation, lignes, aperçu suivant)
+`src/main/kotlin/CouleursPieces.kt` : palette commune serpent ↔ types de pièces
+`src/jsMain/resources/index.html` : structure de la page  
+`src/jsMain/resources/styles.css` : styles (mise en page, thème, canvas)

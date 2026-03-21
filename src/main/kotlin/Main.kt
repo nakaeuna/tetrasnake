@@ -28,9 +28,15 @@ fun main() {
     val lignesSerpent = (canvasSerpent.height / tailleCelluleSerpentPx).toInt()
 
     val colonnesBlocs = 10
-    val tailleCelluleBlocsPx = canvasBlocs.width.toDouble() / colonnesBlocs.toDouble()
     val hauteurHudBlocsPx = 80.0
-    val lignesBlocs = ((canvasBlocs.height.toDouble() - hauteurHudBlocsPx) / tailleCelluleBlocsPx).toInt()
+    val hHudEntier = hauteurHudBlocsPx.toInt()
+    val (tailleCelluleBlocsPx, lignesBlocs) = dimensionsGrilleBlocs(
+        largeurCanvas = canvasBlocs.width,
+        hauteurCanvas = canvasBlocs.height,
+        colonnes = colonnesBlocs,
+        hauteurHudPx = hHudEntier,
+        canvasBlocs = canvasBlocs,
+    )
 
     val jeuBlocs = JeuBlocs(
         colonnes = colonnesBlocs,
@@ -43,7 +49,9 @@ fun main() {
         colonnes = colonnesSerpent,
         lignes = lignesSerpent,
         taillePixel = tailleCelluleSerpentPx,
-        quandSerpentMangePoint = { jeuBlocs.ajouterPieceAleatoireDepuisSerpent() },
+        quandSerpentMangePoint = { indiceTypePiece ->
+            jeuBlocs.ajouterPieceDepuisIndiceType(indiceTypePiece)
+        },
     )
 
     val controleur = ControleurTetrasnake(
@@ -62,6 +70,32 @@ fun main() {
         vitesse = vitesse,
     )
     controleur.demarrer()
+}
+
+/**
+ * Cellules carrées : taille = largeurCanvas / colonnes (entier).
+ * On ajuste la hauteur du canvas pour que (hauteur - HUD) soit un multiple exact de cette taille,
+ * sinon une bande vide en bas faisait croire que la « première » ligne (vue du bas) ne se remplissait pas.
+ */
+private fun dimensionsGrilleBlocs(
+    largeurCanvas: Int,
+    hauteurCanvas: Int,
+    colonnes: Int,
+    hauteurHudPx: Int,
+    canvasBlocs: HTMLCanvasElement,
+): Pair<Double, Int> {
+    val tailleCellule = largeurCanvas / colonnes
+    require(tailleCellule > 0) { "Canvas blocs trop étroit pour $colonnes colonnes." }
+
+    val hauteurZone = hauteurCanvas - hauteurHudPx
+    val lignes = hauteurZone / tailleCellule
+    val hauteurCible = hauteurHudPx + lignes * tailleCellule
+
+    if (hauteurCible != hauteurCanvas) {
+        canvasBlocs.height = hauteurCible
+    }
+
+    return tailleCellule.toDouble() to lignes
 }
 
 private fun ajoutCanvas(id: String): HTMLCanvasElement {

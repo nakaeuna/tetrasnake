@@ -1,7 +1,6 @@
 package taniere.tetrasnake
 
 import org.w3c.dom.CanvasRenderingContext2D
-import kotlin.random.Random
 
 private data class Block(val x: Int, val y: Int)
 
@@ -22,42 +21,35 @@ private class Blocs {
         return PieceDef(rotations = listOf(rotation0, rotation1, rotation2, rotation3), color = couleur)
     }
     
-    // Définition des pièces du jeu de blocs
+    // Définition des pièces du jeu de blocs (couleurs = [couleursPiecesHex], même ordre)
     val pieces: List<PieceDef> = listOf(
-        // I
         definirPiece(
             rotation0 = listOf(Block(0, 1), Block(1, 1), Block(2, 1), Block(3, 1)),
-            couleur = "#22D3EE",
+            couleur = couleursPiecesHex[0],
         ),
-        // O
         definirPiece(
             rotation0 = listOf(Block(1, 1), Block(2, 1), Block(1, 2), Block(2, 2)),
-            couleur = "#F59E0B",
+            couleur = couleursPiecesHex[1],
         ),
-        // T
         definirPiece(
             rotation0 = listOf(Block(1, 0), Block(0, 1), Block(1, 1), Block(2, 1)),
-            couleur = "#A78BFA",
+            couleur = couleursPiecesHex[2],
         ),
-        // J
         definirPiece(
             rotation0 = listOf(Block(0, 0), Block(0, 1), Block(1, 1), Block(2, 1)),
-            couleur = "#60A5FA",
+            couleur = couleursPiecesHex[3],
         ),
-        // L
         definirPiece(
             rotation0 = listOf(Block(2, 0), Block(0, 1), Block(1, 1), Block(2, 1)),
-            couleur = "#F97316",
+            couleur = couleursPiecesHex[4],
         ),
-        // S
         definirPiece(
             rotation0 = listOf(Block(1, 0), Block(2, 0), Block(0, 1), Block(1, 1)),
-            couleur = "#34D399",
+            couleur = couleursPiecesHex[5],
         ),
-        // Z
         definirPiece(
             rotation0 = listOf(Block(0, 0), Block(1, 0), Block(1, 1), Block(2, 1)),
-            couleur = "#EF4444",
+            couleur = couleursPiecesHex[6],
         ),
     )
 }
@@ -81,7 +73,6 @@ class JeuBlocs(
     private val hauteurPixel: Double,
 ) {
     private val blocs = Blocs()
-    private val alea = Random.Default
 
     // 0 = vide, sinon = index de couleur+1
     private val tableau: Array<IntArray> = Array(lignes) { IntArray(colonnes) }
@@ -100,9 +91,11 @@ class JeuBlocs(
     var lignesCompletees: Int = 0
         private set
 
-    fun ajouterPieceAleatoireDepuisSerpent() {
+    /** Ajoute en file la pièce dont le type correspond à la couleur mangée par le serpent. */
+    fun ajouterPieceDepuisIndiceType(indiceType: Int) {
         if (perdu) return
-        queue.addLast(alea.nextInt(blocs.pieces.size))
+        val borne = indiceType.coerceIn(0, blocs.pieces.size - 1)
+        queue.addLast(borne)
     }
 
     fun reinitialiser() {
