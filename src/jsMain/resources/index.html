@@ -27,13 +27,15 @@
             <canvas id="canvas-serpent" width="710" height="756"></canvas>
             <canvas id="canvas-blocs" width="520" height="756"></canvas>
         </main>
+    </div>
+</div>
 
-        <div id="game-overlay" class="hidden">
-            <div class="overlay-card">
-                <div id="perdu-text" class="overlay-title">PERDU</div>
-                <button id="recommencer-btn" class="recommencer-btn">Recommencer (R)</button>
-            </div>
-        </div>
+<div id="game-overlay" class="game-overlay hidden" aria-hidden="true">
+    <div class="overlay-backdrop" aria-hidden="true"></div>
+    <div class="overlay-card">
+        <div id="perdu-text" class="overlay-title">PERDU</div>
+        <p id="overlay-sous-titre" class="overlay-hint"></p>
+        <button id="recommencer-btn" type="button" class="recommencer-btn">Recommencer (R)</button>
     </div>
 </div>
 

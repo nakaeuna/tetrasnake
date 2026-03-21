@@ -148,63 +148,122 @@ body {
     aspect-ratio: 520 / 756;
 }
 
-#game-overlay {
-    position: absolute;
+/* Couche plein écran au-dessus de toute l’UI */
+.game-overlay {
+    position: fixed;
     inset: 0;
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 18px;
-    background: rgba(3, 7, 18, 0.72);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right))
+        max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+    pointer-events: auto;
 }
 
-#game-overlay.hidden {
+.game-overlay.hidden {
     display: none;
 }
 
+/* Fond flouté sur tout l’écran (double couche = flou plus dense + lisibilité) */
+.overlay-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 7, 18, 0.45);
+    backdrop-filter: blur(22px) saturate(1.15);
+    -webkit-backdrop-filter: blur(22px) saturate(1.15);
+}
+
+.game-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        ellipse 90% 70% at 50% 45%,
+        rgba(15, 23, 42, 0.35) 0%,
+        rgba(3, 7, 18, 0.75) 100%
+    );
+    pointer-events: none;
+}
+
 .overlay-card {
-    width: min(560px, 100%);
-    border-radius: 20px;
-    border: 1px solid rgba(251, 146, 60, 0.45);
+    position: relative;
+    z-index: 1;
+    width: min(520px, 100%);
+    border-radius: 22px;
+    border: 1px solid rgba(251, 146, 60, 0.5);
     background: linear-gradient(
         160deg,
-        rgba(15, 23, 42, 0.92) 0%,
-        rgba(2, 6, 23, 0.94) 100%
+        rgba(15, 23, 42, 0.88) 0%,
+        rgba(2, 6, 23, 0.92) 100%
     );
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-        0 0 40px rgba(249, 115, 22, 0.15),
-        0 20px 56px rgba(0, 0, 0, 0.55);
-    padding: 22px 20px 18px;
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 0 60px rgba(249, 115, 22, 0.12),
+        0 24px 64px rgba(0, 0, 0, 0.55);
+    padding: 28px 24px 22px;
     text-align: center;
+}
+
+.game-overlay.overlay--pause .overlay-card {
+    border-color: rgba(34, 211, 238, 0.5);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 0 60px rgba(34, 211, 238, 0.15),
+        0 24px 64px rgba(0, 0, 0, 0.55);
 }
 
 .overlay-title {
     font-family: "Press Start 2P", monospace;
-    font-size: 18px;
+    font-size: clamp(14px, 3.5vw, 18px);
+    line-height: 1.5;
     color: #fff;
     text-shadow:
-        0 0 12px rgba(249, 115, 22, 0.50),
-        0 0 22px rgba(239, 68, 68, 0.20);
-    margin-bottom: 16px;
+        0 0 14px rgba(249, 115, 22, 0.55),
+        0 0 28px rgba(239, 68, 68, 0.25);
+    margin: 0 0 12px;
+}
+
+.game-overlay.overlay--pause .overlay-title {
+    text-shadow:
+        0 0 16px rgba(34, 211, 238, 0.55),
+        0 0 32px rgba(99, 102, 241, 0.3);
+}
+
+.overlay-hint {
+    margin: 0 0 20px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(226, 232, 240, 0.75);
+    min-height: 1.45em;
+}
+
+.overlay-hint:empty {
+    display: none;
 }
 
 .recommencer-btn {
     font-family: "Press Start 2P", monospace;
-    font-size: 12px;
-    padding: 12px 18px;
+    font-size: 11px;
+    padding: 14px 20px;
     border-radius: 12px;
-    border: 4px solid rgba(34, 211, 238, 0.85);
-    background: rgba(34, 211, 238, 0.15);
-    color: #000000;
+    border: 3px solid rgba(34, 211, 238, 0.9);
+    background: rgba(34, 211, 238, 0.18);
+    color: #ecfeff;
     cursor: pointer;
     box-shadow:
-        0 0 0 3px rgba(34, 211, 238, 0.10) inset,
-        0 10px 25px rgba(0,0,0,0.35);
+        0 0 0 2px rgba(34, 211, 238, 0.12) inset,
+        0 10px 28px rgba(0, 0, 0, 0.4);
+    transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .recommencer-btn:hover {
-    background: rgba(34, 211, 238, 0.25);
+    background: rgba(34, 211, 238, 0.3);
+    transform: translateY(-1px);
+}
+
+.recommencer-btn:active {
+    transform: translateY(0);
 }

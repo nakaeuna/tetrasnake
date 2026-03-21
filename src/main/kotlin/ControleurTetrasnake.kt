@@ -5,6 +5,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.HTMLSpanElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
@@ -26,16 +27,18 @@ class ControleurTetrasnake(
     private val elementScoreTotal: HTMLSpanElement,
     private val elementOverlay: HTMLDivElement,
     private val elementTexteGameOver: HTMLDivElement,
+    private val elementSousTitreOverlay: HTMLParagraphElement,
     private val boutonRelancer: HTMLButtonElement,
     private val vitesse: FacteursVitesse,
 ) {
     private var partieTermineeGlobale: Boolean = false
+    private var jeuEnPause: Boolean = false
     private var dernierTimestampMs: Double = 0.0
     private val dernierDeclenchementParActionMs = mutableMapOf<String, Double>()
 
     fun demarrer() {
         boutonRelancer.addEventListener("click", { _: Event ->
-            relancerToutesLesParties()
+            gererClicBoutonOverlay()
         })
 
         window.addEventListener("keydown", { e ->
@@ -48,12 +51,60 @@ class ControleurTetrasnake(
         window.requestAnimationFrame(::boucleDeJeu)
     }
 
+    private fun gererClicBoutonOverlay() {
+        when {
+            partieTermineeGlobale -> relancerToutesLesParties()
+            jeuEnPause -> reprendrePartie()
+        }
+    }
+
     private fun relancerToutesLesParties() {
         jeuSerpent.reinitialiser()
         jeuBlocs.reinitialiser()
         jeuBlocs.setDescenteAccelereeMaintenue(false)
         partieTermineeGlobale = false
+        jeuEnPause = false
+        masquerOverlay()
+    }
+
+    private fun reprendrePartie() {
+        jeuEnPause = false
+        masquerOverlay()
+    }
+
+    private fun mettreEnPause() {
+        if (partieTermineeGlobale) return
+        jeuBlocs.setDescenteAccelereeMaintenue(false)
+        jeuEnPause = true
+        afficherOverlayPause()
+    }
+
+    private fun afficherOverlayPause() {
+        elementTexteGameOver.textContent = "PAUSE"
+        elementSousTitreOverlay.textContent = "Appuie sur Échap ou sur le bouton en-dessous pour reprendre la partie."
+        boutonRelancer.textContent = "Reprendre (Échap)"
+        afficherOverlay()
+    }
+
+    private fun afficherOverlayGameOver() {
+        elementTexteGameOver.textContent = "GAME OVER"
+        elementSousTitreOverlay.textContent = "Appuie sur R ou sur le bouton en-dessous pour recommencer une partie."
+        boutonRelancer.textContent = "Recommencer (R)"
+        afficherOverlay()
+    }
+
+    private fun masquerOverlay() {
         elementOverlay.classList.add("hidden")
+        elementOverlay.classList.remove("overlay--pause", "overlay--gameover")
+        elementSousTitreOverlay.textContent = ""
+        elementOverlay.setAttribute("aria-hidden", "true")
+    }
+
+    private fun afficherOverlay() {
+        elementOverlay.classList.remove("overlay--pause")
+        elementOverlay.classList.add("overlay--gameover")
+        elementOverlay.classList.remove("hidden")
+        elementOverlay.setAttribute("aria-hidden", "false")
     }
 
     private fun peutDeclencherAction(action: String, minGapMs: Double): Boolean {
@@ -119,11 +170,26 @@ class ControleurTetrasnake(
     private fun gererTouchePressee(event: KeyboardEvent) {
         val touchePressee = event.key
 
-        if (touchePressee.equals("r", ignoreCase = true)) {
-            relancerToutesLesParties()
+        if (touchePressee == "Escape") {
+            event.preventDefault()
+            if (partieTermineeGlobale) return
+            if (jeuEnPause) {
+                reprendrePartie()
+            } else {
+                mettreEnPause()
+            }
             return
         }
-        if (partieTermineeGlobale) return
+
+        if (touchePressee.equals("r", ignoreCase = true)) {
+            when {
+                partieTermineeGlobale -> relancerToutesLesParties()
+                jeuEnPause -> reprendrePartie()
+            }
+            return
+        }
+
+        if (partieTermineeGlobale || jeuEnPause) return
 
         gererTouchesSerpent(touchePressee)
         gererTouchesBlocs(touchePressee, event)
@@ -143,7 +209,10 @@ class ControleurTetrasnake(
 
     private fun mettreAJourLogiqueJeux(deltaSeconde: Double) {
         if (partieTermineeGlobale) {
-            // On force l'arrêt des descentes accélérées.
+            jeuBlocs.setDescenteAccelereeMaintenue(false)
+            return
+        }
+        if (jeuEnPause) {
             jeuBlocs.setDescenteAccelereeMaintenue(false)
             return
         }
@@ -157,10 +226,10 @@ class ControleurTetrasnake(
         if (!(jeuSerpent.perdu || jeuBlocs.perdu)) return
 
         partieTermineeGlobale = true
+        jeuEnPause = false
         jeuSerpent.forcerFinDePartie()
         jeuBlocs.forcerFinDePartie()
-        elementTexteGameOver.textContent = "GAME OVER"
-        elementOverlay.classList.remove("hidden")
+        afficherOverlayGameOver()
     }
 
     private fun mettreAJourScoresEtRendu() {

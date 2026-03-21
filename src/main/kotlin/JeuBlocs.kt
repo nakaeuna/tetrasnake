@@ -275,7 +275,7 @@ class JeuBlocs(
 
         ctx.fillStyle = "#E5E7EB"
         ctx.font = "bold 16px Inter, Arial, sans-serif"
-        ctx.fillText("NEXT", 18.0, 30.0)
+        ctx.fillText("SUIVANT", 18.0, 30.0)
     }
 
     private data class BoitePreview(

@@ -4,6 +4,7 @@ import kotlinx.browser.document
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.HTMLSpanElement
 import org.w3c.dom.HTMLCanvasElement
 
@@ -19,6 +20,7 @@ fun main() {
     val elementScoreTotal = ajoutSpan("score-total")
     val elementOverlay = ajoutDiv("game-overlay")
     val elementTexteGameOver = ajoutDiv("perdu-text")
+    val elementSousTitreOverlay = ajoutParagraphe("overlay-sous-titre")
     val boutonRelancer = ajoutButton("recommencer-btn")
 
     val vitesse = FacteursVitesse(multiplicateurSerpent = 1.0, multiplicateurBlocs = 1.0)
@@ -66,6 +68,7 @@ fun main() {
         elementScoreTotal = elementScoreTotal,
         elementOverlay = elementOverlay,
         elementTexteGameOver = elementTexteGameOver,
+        elementSousTitreOverlay = elementSousTitreOverlay,
         boutonRelancer = boutonRelancer,
         vitesse = vitesse,
     )
@@ -106,6 +109,11 @@ private fun ajoutSpan(id: String): HTMLSpanElement {
 private fun ajoutDiv(id: String): HTMLDivElement {
     return document.getElementById(id) as? HTMLDivElement
         ?: error("Div introuvable: #$id")
+}
+
+private fun ajoutParagraphe(id: String): HTMLParagraphElement {
+    return document.getElementById(id) as? HTMLParagraphElement
+        ?: error("Paragraphe introuvable: #$id")
 }
 
 private fun ajoutButton(id: String): HTMLButtonElement {
