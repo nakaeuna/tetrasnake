@@ -48,4 +48,4 @@ Ouvre ensuite l’URL affichée `http://localhost:8080/`. Elle s'ouvre automatiq
 `src/main/kotlin/JeuBlocs.kt` : blocs (pièces, gravité, rotation, lignes, aperçu suivant)
 `src/main/kotlin/CouleursPieces.kt` : palette commune serpent ↔ types de pièces
 `src/jsMain/resources/index.html` : structure de la page  
-`src/jsMain/resources/styles.css` : styles (mise en page, thème, canvas)
+`src/jsMain/resources/style.css` : styles (mise en page, thème, canvas plein écran)

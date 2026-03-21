@@ -134,10 +134,6 @@ class JeuSerpent(
         return cible.x in 0 until colonnes && cible.y in 0 until lignes
     }
 
-    /**
-     * Vrai si la tête irait sur une case du corps (interdit).
-     * La queue actuelle est libérée au prochain pas si on ne mange pas.
-     */
     private fun mordDansCorps(cible: Pixels, vaManger: Boolean): Boolean {
         if (vaManger) return false
         if (serpent.isEmpty()) return false

@@ -91,6 +91,16 @@ class JeuBlocs(
     var lignesCompletees: Int = 0
         private set
 
+    private var scoreHudSerpent: Int = 0
+    private var scoreHudBlocs: Int = 0
+    private var scoreHudTotal: Int = 0
+
+    fun definirScoresHud(serpent: Int, blocs: Int, total: Int) {
+        scoreHudSerpent = serpent
+        scoreHudBlocs = blocs
+        scoreHudTotal = total
+    }
+
     fun ajouterPieceDepuisIndiceType(indiceType: Int) {
         if (perdu) return
         val borne = indiceType.coerceIn(0, blocs.pieces.size - 1)
@@ -261,21 +271,26 @@ class JeuBlocs(
     }
 
     private fun dessinerFondEtHud(ctx: CanvasRenderingContext2D) {
-        // Fond complet.
+        val largeurTotale = colonnes * taillePixel
+        val hauteurTotale = hauteurPixel + lignes * taillePixel
+
         ctx.fillStyle = "rgba(11,18,32,1)"
-        ctx.fillRect(0.0, 0.0, colonnes * taillePixel, hauteurPixel + lignes * taillePixel)
+        ctx.fillRect(0.0, 0.0, largeurTotale, hauteurTotale)
 
-        // HUD en haut (suivante).
-        ctx.fillStyle = "rgba(2, 6, 23, 0.75)"
-        ctx.fillRect(0.0, 0.0, colonnes * taillePixel, hauteurPixel)
+        @Suppress("UNUSED_VARIABLE", "UnsafeCastFromDynamic")
+        val grad = ctx.createLinearGradient(0.0, 0.0, 0.0, hauteurPixel).asDynamic()
+        grad.addColorStop(0.0, "rgba(17, 24, 39, 0.98)")
+        grad.addColorStop(0.55, "rgba(8, 12, 28, 0.96)")
+        grad.addColorStop(1.0, "rgba(2, 6, 23, 0.94)")
+        ctx.fillStyle = grad
+        ctx.fillRect(0.0, 0.0, largeurTotale, hauteurPixel)
 
-        ctx.strokeStyle = "rgba(255,255,255,0.12)"
+        val zones = calculerZonesHud()
+        dessinerTexteScoresHudCentres(ctx, zones.boiteScores)
+
+        ctx.strokeStyle = "rgba(148, 163, 184, 0.35)"
         ctx.lineWidth = 2.0
-        ctx.strokeRect(8.0, 8.0, colonnes * taillePixel - 16.0, hauteurPixel - 16.0)
-
-        ctx.fillStyle = "#E5E7EB"
-        ctx.font = "bold 16px Inter, Arial, sans-serif"
-        ctx.fillText("SUIVANT", 18.0, 30.0)
+        ctx.strokeRect(1.0, 1.0, largeurTotale - 2.0, hauteurPixel - 2.0)
     }
 
     private data class BoitePreview(
@@ -285,13 +300,70 @@ class JeuBlocs(
         val hauteur: Double,
     )
 
-    private fun calculerBoitePieceSuivante(): BoitePreview {
-        val previewBoxW = 140.0
-        val previewBoxH = hauteurPixel - 44.0
-        val previewBoxX = colonnes * taillePixel - 18.0 - previewBoxW
-        val previewBoxY = 34.0
-        return BoitePreview(x = previewBoxX, y = previewBoxY, largeur = previewBoxW, hauteur = previewBoxH)
+    private data class ZonesHud(
+        val boiteScores: BoitePreview,
+        val boitePreview: BoitePreview,
+    )
+
+    private fun calculerZonesHud(): ZonesHud {
+        val marge = 8.0
+        val ecart = 12.0
+        val largeurCanvas = colonnes * taillePixel
+        val hBande = (hauteurPixel - 2 * marge).coerceAtLeast(24.0)
+        val largeurMinScores = 188.0
+        val ratioLargeurSurHauteur = 140.0 / 36.0
+        val largeurMaxApercu =
+            (largeurCanvas - 2 * marge - ecart - largeurMinScores).coerceAtLeast(64.0)
+
+        var hApercu = hBande
+        var wApercu = hApercu * ratioLargeurSurHauteur
+        if (wApercu > largeurMaxApercu) {
+            wApercu = largeurMaxApercu
+            hApercu = wApercu / ratioLargeurSurHauteur
+        }
+
+        val xApercu = largeurCanvas - marge - wApercu
+        val yApercu = marge + (hBande - hApercu) / 2.0
+        val boitePreview = BoitePreview(x = xApercu, y = yApercu, largeur = wApercu, hauteur = hApercu)
+
+        val wScores = (xApercu - ecart - marge).coerceAtLeast(72.0)
+        val boiteScores = BoitePreview(x = marge, y = marge, largeur = wScores, hauteur = hBande)
+
+        return ZonesHud(boiteScores = boiteScores, boitePreview = boitePreview)
     }
+
+    private fun dessinerTexteScoresHudCentres(ctx: CanvasRenderingContext2D, boite: BoitePreview) {
+        val interligne = when {
+            boite.hauteur >= 110.0 -> 24.0
+            boite.hauteur >= 80.0 -> 20.0
+            else -> 16.0
+        }
+        val taillePolice = when {
+            boite.hauteur >= 110.0 -> 11.0
+            boite.hauteur >= 80.0 -> 9.0
+            else -> 8.0
+        }
+        ctx.font = "${taillePolice}px \"Press Start 2P\", monospace"
+
+        @Suppress("UNUSED_VARIABLE", "UnsafeCastFromDynamic")
+        val ctxDyn = ctx.asDynamic()
+        ctxDyn.textAlign = "center"
+        ctxDyn.textBaseline = "middle"
+
+        val centreX = boite.x + boite.largeur / 2.0
+        val milieuY = boite.y + boite.hauteur / 2.0
+        val y0 = milieuY - interligne
+        val y1 = milieuY
+        val y2 = milieuY + interligne
+
+        ctx.fillStyle = "rgba(226, 232, 240, 0.95)"
+        ctx.fillText("SERPENT  $scoreHudSerpent", centreX, y0)
+        ctx.fillText("BLOCS  $scoreHudBlocs", centreX, y1)
+        ctx.fillStyle = "#a7f3d0"
+        ctx.fillText("TOTAL  $scoreHudTotal", centreX, y2)
+    }
+
+    private fun calculerBoitePieceSuivante(): BoitePreview = calculerZonesHud().boitePreview
 
     private fun obtenirPieceSuivante(): AffichageFuturBloc? {
         return when {
@@ -303,12 +375,6 @@ class JeuBlocs(
 
     private fun dessinerPieceSuivante(ctx: CanvasRenderingContext2D) {
         val boite = calculerBoitePieceSuivante()
-
-        ctx.fillStyle = "rgba(255,255,255,0.04)"
-        ctx.fillRect(boite.x, boite.y, boite.largeur, boite.hauteur)
-        ctx.strokeStyle = "rgba(34, 211, 238, 0.55)"
-        ctx.lineWidth = 2.0
-        ctx.strokeRect(boite.x, boite.y, boite.largeur, boite.hauteur)
 
         val pieceSuivante = obtenirPieceSuivante() ?: return
 

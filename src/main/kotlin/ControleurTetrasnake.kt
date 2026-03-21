@@ -6,7 +6,6 @@ import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLParagraphElement
-import org.w3c.dom.HTMLSpanElement
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 
@@ -22,9 +21,6 @@ class ControleurTetrasnake(
     private val canvasBlocs: HTMLCanvasElement,
     private val contexteSerpent: CanvasRenderingContext2D,
     private val contexteBlocs: CanvasRenderingContext2D,
-    private val elementScoreSerpent: HTMLSpanElement,
-    private val elementScoreBlocs: HTMLSpanElement,
-    private val elementScoreTotal: HTMLSpanElement,
     private val elementOverlay: HTMLDivElement,
     private val elementTexteGameOver: HTMLDivElement,
     private val elementSousTitreOverlay: HTMLParagraphElement,
@@ -40,14 +36,12 @@ class ControleurTetrasnake(
         boutonRelancer.addEventListener("click", { _: Event ->
             gererClicBoutonOverlay()
         })
-
         window.addEventListener("keydown", { e ->
             gererTouchePressee(e as KeyboardEvent)
         })
         window.addEventListener("keyup", { e ->
             gererToucheRelachee(e as KeyboardEvent)
         })
-
         window.requestAnimationFrame(::boucleDeJeu)
     }
 
@@ -79,10 +73,13 @@ class ControleurTetrasnake(
         afficherOverlayPause()
     }
 
+    val overlayGameover = "overlay--gameover"
+
     private fun afficherOverlayPause() {
         elementTexteGameOver.textContent = "PAUSE"
         elementSousTitreOverlay.textContent = "Appuie sur Échap ou sur le bouton en-dessous pour reprendre la partie."
         boutonRelancer.textContent = "Reprendre (Échap)"
+        elementOverlay.classList.remove(overlayGameover)
         afficherOverlay()
     }
 
@@ -90,19 +87,19 @@ class ControleurTetrasnake(
         elementTexteGameOver.textContent = "GAME OVER"
         elementSousTitreOverlay.textContent = "Appuie sur R ou sur le bouton en-dessous pour recommencer une partie."
         boutonRelancer.textContent = "Recommencer (R)"
+        elementOverlay.classList.add(overlayGameover)
         afficherOverlay()
     }
 
     private fun masquerOverlay() {
         elementOverlay.classList.add("hidden")
-        elementOverlay.classList.remove("overlay--pause", "overlay--gameover")
+        elementOverlay.classList.remove("overlay--pause", overlayGameover)
         elementSousTitreOverlay.textContent = ""
         elementOverlay.setAttribute("aria-hidden", "true")
     }
 
     private fun afficherOverlay() {
         elementOverlay.classList.remove("overlay--pause")
-        elementOverlay.classList.add("overlay--gameover")
         elementOverlay.classList.remove("hidden")
         elementOverlay.setAttribute("aria-hidden", "false")
     }
@@ -237,9 +234,7 @@ class ControleurTetrasnake(
         val scoreBlocs = jeuBlocs.score
         val scoreTotal = scoreSerpent + scoreBlocs
 
-        elementScoreSerpent.textContent = scoreSerpent.toString()
-        elementScoreBlocs.textContent = scoreBlocs.toString()
-        elementScoreTotal.textContent = scoreTotal.toString()
+        jeuBlocs.definirScoresHud(serpent = scoreSerpent, blocs = scoreBlocs, total = scoreTotal)
 
         contexteSerpent.clearRect(
             0.0,
