@@ -162,7 +162,6 @@ class JeuSerpent(
         placerNouvelleNourriture()
 
         if (serpent.size >= colonnes * lignes) {
-            // Grille entièrement remplie : victoire implicite.
             perdu = true
         }
     }

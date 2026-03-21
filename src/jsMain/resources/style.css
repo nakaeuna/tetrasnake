@@ -140,7 +140,6 @@ body {
         0 0 28px rgba(34, 211, 238, 0.08);
 }
 
-/* Même hauteur à l’écran : largeur dérivée du ratio intrinsèque du canvas */
 #canvas-serpent {
     aspect-ratio: 710 / 756;
 }

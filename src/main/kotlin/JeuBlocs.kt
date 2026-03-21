@@ -8,7 +8,7 @@ private data class PieceDef(val rotations: List<List<Block>>, val color: String)
 
 private class Blocs {
     // Définition en coordonnées 4x4, rotation 0.
-    // On génère ensuite les rotations par transform matricielle.
+    // On génère ensuite les rotations par transformation matricielle.
     private fun definirPiece(rotation0: List<Block>, couleur: String): PieceDef {
         fun tourner90Degres(points: List<Block>): List<Block> = points.map { p ->
             // (x,y) -> (y, 3-x) dans une matrice 4x4
@@ -91,7 +91,6 @@ class JeuBlocs(
     var lignesCompletees: Int = 0
         private set
 
-    /** Ajoute en file la pièce dont le type correspond à la couleur mangée par le serpent. */
     fun ajouterPieceDepuisIndiceType(indiceType: Int) {
         if (perdu) return
         val borne = indiceType.coerceIn(0, blocs.pieces.size - 1)
@@ -134,7 +133,6 @@ class JeuBlocs(
 
         val rotationSuivante = (pieceActive.rotationIndex + 1) % 4
 
-        // Mini test de décalage : on tente quelques offsets.
         essayerRotationAvecAcceleration(pieceActive, rotationSuivante)
     }
 
@@ -153,7 +151,6 @@ class JeuBlocs(
             graviteEnCoursSeconde -= intervalSec
             val pieceActiveCourante = enTrainDeTomber ?: return
 
-            // On descend d'une ligne ; si collision, on verrouille et on enchaîne.
             val deplacementPossible = tenterDeplacement(pieceActiveCourante, dx = 0, dy = 1)
             if (deplacementPossible) continue
 
@@ -164,7 +161,6 @@ class JeuBlocs(
 
     private fun genererProchainePieceDepuisFile() {
         val typeIndex = queue.removeFirst()
-        // Centrage approximatif sur une matrice 4x4.
         val spawnX = (colonnes - 4) / 2
         val spawnY = -1
 
@@ -243,7 +239,6 @@ class JeuBlocs(
     }
 
     private fun supprimerLigne(ligneY: Int) {
-        // Supprime la ligne y et remonte tout.
         for (yy in ligneY downTo 1) {
             tableau[yy] = tableau[yy - 1]
         }
