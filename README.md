@@ -1,51 +1,66 @@
 # TetraSnake
 
-Jeu web asymétrique en **Kotlin 100%**, rendu en **HTML5 `<canvas>`** avec une boucle `requestAnimationFrame`.
+> Asymmetric dual web game combining Snake and falling blocks, written 100% in Kotlin/JS with HTML5 Canvas.
 
-## Règles rapides
+![Context](https://img.shields.io/badge/Context-Personal%20Project-6f42c1?style=flat-square)
+![Kotlin/JS](https://img.shields.io/badge/Kotlin%2FJS-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
+![HTML5 Canvas](https://img.shields.io/badge/HTML5%20Canvas-E34F26?style=flat-square&logo=html5&logoColor=white)
+[![Play Online](https://img.shields.io/badge/Play%20Online-GitHub%20Pages-2ea44f?style=flat-square&logo=github)](https://nakaeuna.github.io/tetrasnake/)
 
-### À gauche : Snake (clavier `Z Q S D`)
-- Déplacement sur grille (zone plus large : plus de cases)
-- Collision murs / morsure du corps = Game Over (virage interdit s’il ferait entrer la tête dans le corps)
-- Chaque point a une **couleur** : elle correspond au **type de pièce** envoyée au jeu de droite (I, O, T, J, L, S, Z)
+## Overview
 
-### À droite : Blocs qui tombent
-- Pièces rotatives avec gravité
-- Collision et effacement des lignes
-- Le jeu reste vide si aucune pièce n’est disponible
+**TetraSnake** is an asymmetric dual-board web game built entirely in **Kotlin/JS** and rendered on **HTML5 `<canvas>`** using a `requestAnimationFrame` game loop. Two classic games run side by side and depend on each other: eating colored food in Snake generates the corresponding falling tetrominoes on the right board.
 
-### Game over général : 
-- si l’un des deux jeux se termine, les deux s’arrêtent
+👉 **[Play directly in your browser](https://nakaeuna.github.io/tetrasnake/)**
 
-## Contrôles
+## Gameplay & Rules
 
-### Snake :
-  - `Z` : haut
-  - `Q` : gauche
-  - `S` : bas
-  - `D` : droite
+- **Left board — Snake (`Z Q S D`)**
+  - Grid-based movement across a wider playfield.
+  - Hitting a wall or biting the snake's own body triggers a Game Over (instant 180° self-collision turns are prevented).
+  - Each food item has a **color** mapped to a specific **tetromino type** (`I`, `O`, `T`, `J`, `L`, `S`, `Z`) sent to the right board.
+- **Right board — Falling Blocks (Arrow keys)**
+  - Rotating tetrominoes with gravity, collision detection, and line clearing.
+  - The board stays idle whenever no piece is queued from the Snake board.
+- **Shared Game Over**: if either board ends, both games stop simultaneously.
 
-### Blocs :
-  - `←` / `→` : déplacer
-  - `↑` : rotation
-  - `↓` : descente accélérée (soft drop)
+## Controls
 
-### Relancer :
-  - `R` : Relancer une partie
+| Board / Action | Keys |
+|---|---|
+| Snake movement | `Z` (up), `Q` (left), `S` (down), `D` (right) |
+| Move block | `←` / `→` |
+| Rotate block | `↑` |
+| Soft drop | `↓` |
+| Restart game | `R` |
 
-## Lancer le projet
+## Tech Stack
+
+- **Kotlin/JS** (Gradle)
+- **HTML5 `<canvas>`** & DOM API (`requestAnimationFrame`)
+- **HTML5 / CSS3**
+
+## Project Structure
+
+```text
+├── build.gradle.kts
+├── .github/workflows/deploy-pages.yml  # Automatic GitHub Pages deployment
+└── src/
+    ├── jsMain/resources/
+    │   ├── index.html                  # Page layout & canvas elements
+    │   └── style.css                   # Theme and responsive fullscreen canvas styling
+    └── main/kotlin/
+        ├── Main.kt                     # DOM bootstrap & game initialization
+        ├── ControleurTetrasnake.kt     # Game loop, keyboard handling, scores & overlays
+        ├── JeuSerpent.kt               # Snake grid, collisions & colored food
+        ├── JeuBlocs.kt                 # Falling pieces, gravity, rotation, line clearing & preview
+        └── CouleursPieces.kt           # Shared color palette linking food to piece types
+```
+
+## Getting Started
 
 ```bash
 ./gradlew jsBrowserDevelopmentRun
 ```
 
-Ouvre ensuite l’URL affichée `http://localhost:8080/`. Elle s'ouvre automatiquement dans le navigateur la plupart du temps.
-
-## Architecture
-`src/main/kotlin/Main.kt` : bootstrap DOM + création des jeux
-`src/main/kotlin/ControleurTetrasnake.kt` : boucle `requestAnimationFrame`, clavier, scores, overlay
-`src/main/kotlin/JeuSerpent.kt` : serpent (grille, collision, nourriture colorée)
-`src/main/kotlin/JeuBlocs.kt` : blocs (pièces, gravité, rotation, lignes, aperçu suivant)
-`src/main/kotlin/CouleursPieces.kt` : palette commune serpent ↔ types de pièces
-`src/jsMain/resources/index.html` : structure de la page  
-`src/jsMain/resources/style.css` : styles (mise en page, thème, canvas plein écran)
+Then open `http://localhost:8080/` in your browser (opens automatically in most environments).
